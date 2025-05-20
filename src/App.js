@@ -1,22 +1,25 @@
 import './App.css';
-import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
+import Sidebar from './components/Sidebar';
+import Home from './pages/Home.js';
+import BlackScholesPricer from './pages/BlackScholesPricer';
 
 function App() {
   return (
-    <div style={{ fontFamily: 'sans-serif', textAlign: 'center'}}>
-      <header style={{ background: '#282c34', padding: '2rem', color: 'white'}}>
-        <h1> Welcome to my website</h1>
-      </header>
-      <main style={{padding: '2rem'}}>
-        <p>This site showcases all my personal projects built and deployed.</p>
-        <button onClick={() => alert('Hello!')}>
-          Click Me
-        </button>
-      </main>
-      <footer style={{ marginTop: '2rem', fontSize: '0.8rem'}}>
-        © {new Date().getFullYear()} Tanishk Deoghare
-      </footer>
-    </div>
+    <BrowserRouter>
+      <div className="app-container">
+        <Sidebar/>
+        <div className='main-content'>
+          <header style={{ background: '#282c34', padding: '2rem', color:'white'}}>
+            <h1>Welcome to my website</h1>
+          </header>
+          <Routes>
+            <Route path='/' element={<Home/>} />
+            <Route path='bs-pricer' element={<BlackScholesPricer/>} />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
   )
 }
 

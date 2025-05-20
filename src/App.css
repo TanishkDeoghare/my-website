@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.app-container {display:flex; min-height: 100vh;}
+
+.sidebar {
+  width: 200px;
+  background: #f4f4f4;
+  padding : 1rem;
+}
+
+.sidebar ul { list-style: none; padding: 0;}
+.sidebar li {margin: 0.5rem 0;}
+.main-content {flex-grow: 1;}
