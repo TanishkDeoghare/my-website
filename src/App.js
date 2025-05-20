@@ -4,6 +4,8 @@ import Sidebar from './components/Sidebar';
 import Home from './pages/Home.js';
 import BlackScholesPricer from './pages/BlackScholesPricer';
 import MonteCarloPricer from './pages/MonteCarloPricer';
+import BlackModelPricer from './pages/BlackModelPricer';
+import BinomialPricer from './pages/BinomialPricer';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
             <Route path='/' element={<Home/>} />
             <Route path='bs-pricer' element={<BlackScholesPricer/>} />
             <Route path='mc-pricer' element={<MonteCarloPricer/>} />
+            <Route path='black-pricer' element={<BlackModelPricer/>}/>
+            <Route path='binomial-pricer' element={<BinomialPricer/>}/>
           </Routes>
         </div>
       </div>
