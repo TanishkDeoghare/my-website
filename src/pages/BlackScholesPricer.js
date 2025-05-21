@@ -26,8 +26,8 @@ export default function BlackScholesPricer() {
             <h2>Black-Scholes Pricer</h2>
             <form onSubmit={handleSubmit}>
                 {['S','K','T','r','sigma'].map(name=> (
-                    <div key={name}>
-                        <label>{name}: </label>
+                    <div key={name} style={{margin: '0.5rem 0'}}>
+                        <label style={{width: '80px', display: 'inline-block'}}>{name}: </label>
                         <input 
                             type="number"
                             step="any"
@@ -38,8 +38,8 @@ export default function BlackScholesPricer() {
                         />
                     </div>
                 ))}
-                <div>
-                    <label>Type: </label>
+                <div style={{margin: '0.5rem 0'}}>
+                    <label style={{width: '80px', display: 'inline-block'}}>Type: </label>
                     <select name='optionType' onChange={handleChange} value={inputs.optionType}>
                         <option value="call">Call</option>
                         <option value="put">Put</option>

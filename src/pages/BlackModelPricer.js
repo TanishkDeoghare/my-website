@@ -30,8 +30,8 @@ export default function BlackModelPricer() {
             <h2>Black's model Pricer</h2>
             <form onSubmit={handleSubmit}>
                 {['F','K','T','r','sigma'].map(name =>(
-                    <div key={name}>
-                        <label>{name}: </label>
+                    <div key={name} style={{margin: '0.5rem 0'}}>
+                        <label style={{width: '80px', display: 'inline-block'}}>{name}: </label>
                         <input 
                             type="number"
                             step="any"
@@ -42,8 +42,8 @@ export default function BlackModelPricer() {
                         />
                     </div>
                 ))}
-                <div>
-                    <label>Type: </label>
+                <div style={{margin: '0.5rem 0'}}>
+                    <label style={{width: '80px', display: 'inline-block'}}>Type: </label>
                     <select
                         name='optionType'
                         onChange={handleChange}

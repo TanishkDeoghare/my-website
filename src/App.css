@@ -1,39 +1,35 @@
-.app-container {display:flex; min-height: 100vh;}
-
-.sidebar {
-  width: 200px;
-  background: #f4f4f4;
-  /* background: #333; */
-  padding : 1rem;
-}
-
-.sidebar ul { list-style: none; padding: 0;}
-.sidebar li {margin: 0.5rem 0;}
-.main-content {flex-grow: 1;}
-
 :root{
   --bg-color: #ffffff;
   --text-color: #000000;
-  --header-bg: #282c34;
+  --header-bg: #ffffff;
+  --sidebar-bg: #f4f4f4;
+  --button-bg: #e0e0e0;
+  --button-fg: #000000;
 }
 
 .dark{
   --bg-color: #121212;
   --text-color: #e0e0e0;
   --header-bg: #20232a;
+  --sidebar-bg: #1f1f1f;
+  --button-bg: #333333;
+  --button-fg: #e0e0e0;
 }
 
-body{
+body, .app {
   margin: 0;
-  background-color: var(--header-bg);
+  background-color: var(--bg-color);
   color: var(--text-color);
   font-family: sans-serif;
 }
 
 .app-header{
-  background: var(--bg-color);
+  background: var(--header-bg);
   padding: 2rem;
-  color: white;
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .app-main {
@@ -43,4 +39,21 @@ body{
 .app-footer {
   margin-top: 2rem;
   font-size: 0.8rem;
+}
+
+.app-container {display:flex; min-height: 100vh;}
+
+.sidebar {
+  width: 200px;
+  background: var(--sidebar-bg);
+  padding : 1rem;
+}
+
+.sidebar ul { list-style: none; padding: 0;}
+.sidebar li {margin: 0.5rem 0;}
+.main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }

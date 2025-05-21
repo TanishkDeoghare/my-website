@@ -31,8 +31,8 @@ export default function MonteCarloPricer() {
             <h2>Monte Carlo Option pricer</h2>
             <form onSubmit={handleSubmit}>
                 {['S','K','T','r','sigma','paths'].map(name =>(
-                    <div key={name}>
-                        <label>{name}:</label>
+                    <div key={name} style={{margin: '0.5rem 0'}}>
+                        <label style={{width: '80px', display: 'inline-block'}}>{name}: </label>
                         <input
                             type='number'
                             step="any"
@@ -43,8 +43,8 @@ export default function MonteCarloPricer() {
                         </input>
                     </div>
                 ))}
-                <div>
-                    <label>Type: </label>
+                <div style={{margin: '0.5rem 0'}}>
+                    <label style={{width: '80px', display: 'inline-block'}}>Type: </label>
                     <select 
                         name='optionType'
                         onChange={handleChange}
