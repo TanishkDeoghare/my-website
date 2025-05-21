@@ -145,6 +145,77 @@ def trinomial_price():
 
     return jsonify({'price':values[0]})
 
+def thomas(a,b,c,d):
+    n = len(b)
+    cp = np.zeros(n-1)
+    dp = np.zeros(n)
+    cp[0] = c[0]/b[0]
+    dp[0] = d[0]/b[0]
+    for i in range(1, n-1):
+        denom = b[i] - a[i-1]*cp[i-1]
+        cp[i] = c[i]/denom
+        dp[i] = (d[i]-a[i-1]*dp[i-1])/denom
+    dp[n-1] = (d[n-1]-a[n-2]*d[n-2])/ (b[n-1] - a[n-2]*cp[n-2])
+    x = np.zeros(n)
+    x[n-1] = dp[n-1]
+    for i in range(n-2, -1,-1):
+        x[i] = dp[i] - cp[i]*x[i+1]
+    return x
+
+@app.route('/api/pde-price', methods=['POST'])
+def pde_price():
+    data = request.get_json(force=True)
+    S0 = float(data['S'])
+    K = float(data['K'])
+    T = float(data['T'])
+    r = float(data['r'])
+    sigma = float(data['sigma'])
+    S_max = float(data['S_max'])
+    M = int(float(data['M']))
+    N = int(float(data['N']))
+    opt = data['optionType']
+    
+    ds = S_max/M
+    dt = T/N
+    
+    V = np.array([
+        max((j*ds - K), 0.0) if opt=='call' else max((K - j*ds), 0.0)
+        for j in range(M+1)
+    ], dtype=float)
+    
+    a = np.zeros(M-1); b = np.zeros(M-1); c = np.zeros(M-1)
+    ap = np.zeros(M-1); bp = np.zeros(M-1); cp = np.zeros(M-1)
+    
+    for j in range(1, M):
+        j2 = j
+        alpha = 0.25*dt*(sigma**2*j2**2 - r*j2)
+        beta = -0.5*dt*(sigma**2*j2**2 + r)
+        gamma = 0.25*dt*(sigma**2*j2**2 + r*j2)
+        
+        a[j-1], b[j-1], c[j-1] = -alpha, 1-beta, -gamma
+        ap[j-1], bp[j-1], cp[j-1] = alpha, 1+beta, gamma
+
+    for n in range(N):
+        t = T - n*dt
+        V0 = 0.0 if opt=='call' else K*math.exp(-r*t)
+        VM = (S_max - K*math.exp(-r*T)) if opt=='call' else 0.0
+        
+        d = ap*V[0:-2] + bp*V[1:-1] + cp*V[2:]
+        d[0] += a[0]*V0
+        d[-1] += c[-1]*VM
+        
+        V_new_int = thomas(a,b,c,d)
+        
+        V = np.concatenate(([V0], V_new_int, [VM]))
+        
+        j0 = S0/ds
+        i = int(math.floor(j0))
+        if i >= M:
+            price = V[-1]
+        else:
+            price = V[i] + (j0 - i)*(V[i+1] - V[i])
+            
+        return jsonify({'price': float(price)})
 
 
 if __name__ == '__main__':

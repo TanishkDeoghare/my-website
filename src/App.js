@@ -7,6 +7,7 @@ import MonteCarloPricer from './pages/MonteCarloPricer';
 import BlackModelPricer from './pages/BlackModelPricer';
 import BinomialPricer from './pages/BinomialPricer';
 import TrinomialPricer from './pages/TrinomialPricer';
+import PDEPricer from './pages/PDEPricer';
 import { useState } from 'react';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <Route path='black-pricer' element={<BlackModelPricer/>}/>
             <Route path='binomial-pricer' element={<BinomialPricer/>}/>
             <Route path='trinomial-pricer' element={<TrinomialPricer/>}/>
+            <Route path='PDE-pricer' element={<PDEPricer/>}/>
           </Routes>
         </div>
       </div>
