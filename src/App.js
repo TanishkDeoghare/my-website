@@ -7,15 +7,23 @@ import MonteCarloPricer from './pages/MonteCarloPricer';
 import BlackModelPricer from './pages/BlackModelPricer';
 import BinomialPricer from './pages/BinomialPricer';
 import TrinomialPricer from './pages/TrinomialPricer';
+import { useState } from 'react';
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
+    <div className={darkMode ? 'dark' : ''}>
     <BrowserRouter>
       <div className="app-container">
         <Sidebar/>
         <div className='main-content'>
           <header style={{ background: '#282c34', padding: '2rem', color:'white'}}>
             <h1>Welcome to my website</h1>
+            <button onClick={() => setDarkMode(!darkMode)}
+              style={{marginLeft: '60rem', padding: '0.5rem 1rem', cursor: 'pointer'}}>
+                {darkMode ? 'Switch to Light' : 'Switch to Dark'}
+              </button>
           </header>
           <Routes>
             <Route path='/' element={<Home/>} />
@@ -28,6 +36,7 @@ function App() {
         </div>
       </div>
     </BrowserRouter>
+    </div>
   )
 }
 
