@@ -3,9 +3,19 @@ from flask_cors import CORS
 import math
 from scipy.stats import norm
 import numpy as np
+from flask_pymongo import PyMongo
+import os
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from flask_jwt_extended import (JWTManager, create_access_token, jwt_required, get_jwt_identity)
 
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
+app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+mongo = PyMongo(app)
+jwt = JWTManager(app)
 
 def black_scholes(S, K, T, r, sigma, option_type):
     d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T)/ (sigma*math.sqrt(T))
@@ -217,6 +227,25 @@ def pde_price():
             
         return jsonify({'price': float(price)})
 
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json(force=True)
+    u, p = data['username'], data['password']
+    if mongo.db.users.find_one({'username': u}):
+        return jsonify({'msg': 'User Exists'}), 400
+    hashed = generate_password_hash(p)
+    mongo.db.users.insert_one({'username': u, 'password': hashed})
+    return jsonify({'msg': 'Registered'}), 201
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json(force=True)
+    u, p = data['username'], data['password']
+    user = mongo.db.users.find_one({'username': u})
+    if user and check_password_hash(user['password'], p):
+        token = create_access_token(identity=u)
+        return jsonify({'access_token': token})
+    return jsonify({'msg':'Bad credentials'}), 401 
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
