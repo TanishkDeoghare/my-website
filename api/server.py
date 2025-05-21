@@ -103,5 +103,49 @@ def binomial_price():
 
     return jsonify({'price': values[0]})
 
+@app.route('/api/trinomial-price', methods=['POST'])
+def trinomial_price():
+    data = request.get_json(force=True)
+    S = float(data['S'])
+    K = float(data['K'])
+    T = float(data['T'])
+    r = float(data['r'])
+    sigma = float(data['sigma'])
+    N = int(float(data['steps']))
+    opt = data['optionType']
+    
+    dt = T/N
+    nu = r - 0.5*sigma**2
+    dx = sigma*math.sqrt(3*dt)
+    
+    u = math.exp(dx)
+    d = math.exp(-dx)
+    
+    pu = 1/6 + (nu*math.sqrt(dt/(12*sigma**2)))
+    pd = 1/6 - (nu*math.sqrt(dt/(12*sigma**2)))
+    pm = 1 - pu - pd
+    
+    values = []
+    for i in range(2*N+1):
+        j = i - N
+        ST = S*(u**j)
+        payoff = max(ST - K, 0.0) if opt == 'call' else max(K - ST, 0.0)
+        values.append(payoff)
+        
+    for i in range(N,0,-1):
+        new_vals = []
+        for j in range(2*i-1):
+            v = (
+                pu * values[j+2] + 
+                pm * values[j+1] + 
+                pd * values[j]
+            )
+            new_vals.append(math.exp(-r*dt)*v)
+        values = new_vals
+
+    return jsonify({'price':values[0]})
+
+
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)

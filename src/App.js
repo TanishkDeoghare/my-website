@@ -6,6 +6,7 @@ import BlackScholesPricer from './pages/BlackScholesPricer';
 import MonteCarloPricer from './pages/MonteCarloPricer';
 import BlackModelPricer from './pages/BlackModelPricer';
 import BinomialPricer from './pages/BinomialPricer';
+import TrinomialPricer from './pages/TrinomialPricer';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path='mc-pricer' element={<MonteCarloPricer/>} />
             <Route path='black-pricer' element={<BlackModelPricer/>}/>
             <Route path='binomial-pricer' element={<BinomialPricer/>}/>
+            <Route path='trinomial-pricer' element={<TrinomialPricer/>}/>
           </Routes>
         </div>
       </div>
