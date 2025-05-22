@@ -18,6 +18,13 @@
 .env.test.local
 .env.production.local
 
+# ignore React env files
+.env.development
+
+# ignore backend env
+api/.env
+
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

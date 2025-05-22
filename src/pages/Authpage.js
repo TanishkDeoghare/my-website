@@ -56,6 +56,14 @@ export default function AuthPage({onAuth}) {
                         required
                         style={{width: '100%', padding: '0.5rem'}}
                     />
+                    <button
+                        type="button"
+                        onClick={() => {
+                            // this forces a full‐page load to your Flask endpoint
+                            window.location.href = `${API}/login/google`;
+                        }}
+                    >Sign in with Google
+                    </button>
                 </div>
                 {err && <div style= {{color: mode === 'signup' ? 'green' : 'red', marginBottom: 8}}>{err}</div>}
                 <button type='submit' style={{width:'100%', padding:'0.5rem'}}>

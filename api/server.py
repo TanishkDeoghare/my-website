@@ -1,26 +1,69 @@
-from flask import Flask, request, jsonify
+import os
+# allow HTTP & relaxed scope in dev (remove in prod)
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
+from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 import math
 from scipy.stats import norm
 import numpy as np
 from flask_pymongo import PyMongo
-import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from flask_jwt_extended import (JWTManager, create_access_token, jwt_required, get_jwt_identity)
+from flask_dance.contrib.google import make_google_blueprint, google
 
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['SECRET_KEY']     = os.getenv('SECRET_KEY')
 mongo = PyMongo(app)
 jwt = JWTManager(app)
+
+# ————— Google OAuth via Flask-Dance —————
+google_bp = make_google_blueprint(
+    client_id     = os.getenv('GOOGLE_OAUTH_CLIENT_ID'),
+    client_secret = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET'),
+    scope         = [
+       'openid',
+       'https://www.googleapis.com/auth/userinfo.email',
+       'https://www.googleapis.com/auth/userinfo.profile'
+    ],
+    redirect_to   = 'oauth2callback'
+)
+app.register_blueprint(google_bp, url_prefix='/login')
+
+# @app.route('/login/google/authorized')
+# def google_login_authorized():
+@app.route('/oauth2callback')
+def oauth2callback():
+    if not google.authorized:
+        return redirect(url_for('google.login'))
+    resp = google.get('/oauth2/v2/userinfo')
+    info = resp.json()
+    
+    user = mongo.db.users.find_one_and_update(
+        {'username': info['email']},
+        {'$setOnInsert' : {
+            'username' : info['email'],
+            'google_id' : info['id'],
+            'name' : info.get('name'),
+        }},
+        upsert = True,
+        return_document = True
+    )
+    
+    token = create_access_token(identity = info['email'])
+    
+    return redirect(f"{os.getenv('REACT_APP_API_URL', 'http://localhost:3000')}/#token={token}")
+
 
 def black_scholes(S, K, T, r, sigma, option_type):
     d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T)/ (sigma*math.sqrt(T))
     d2 = d1 - sigma*math.sqrt(T)
-    if option_type== 'call':
+    if option_type=='call':
         price = S*norm.cdf(d1) - K*math.exp(-r*T)*norm.cdf(d2)
     else:
         price = K*math.exp(-r*T)*norm.cdf(-d2) - S*norm.cdf(-d1)
